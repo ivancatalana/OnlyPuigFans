@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "870154188005",
+    "project_id": "onlypuigfans",
+    "storage_bucket": "onlypuigfans.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:870154188005:android:a05691d138352621af500c",
+        "android_client_info": {
+          "package_name": "com.example.onlypuigfans"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "870154188005-m7fs6dtv1timdl6l63h4j2cvqfrpo0k2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXrpMNSrUCYW1gCSDbfpBjdzE6WlH4x5o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "870154188005-m7fs6dtv1timdl6l63h4j2cvqfrpo0k2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
