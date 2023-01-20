@@ -30,4 +30,9 @@
         android:name="com.example.onlypuigfans.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" />
+    <fragment
+        android:id="@+id/newPostFragment"
+        android:name="com.example.onlypuigfans.NewPostFragment"
+        android:label="fragment_new_post"
+        tools:layout="@layout/fragment_new_post" />
 </navigation>

@@ -11,11 +11,20 @@ import androidx.navigation.Navigation;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class ProfileFragment extends Fragment {
-    NavController navController;   // <-----------------
+
+    ImageView photoImageView;
+    TextView displayNameTextView, emailTextView;
 
     public ProfileFragment() {}
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -26,6 +35,29 @@ public class ProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        navController = Navigation.findNavController(view);  // <-----------------
+
+        photoImageView = view.findViewById(R.id.photoImageView);
+        displayNameTextView = view.findViewById(R.id.displayNameTextView);
+        emailTextView = view.findViewById(R.id.emailTextView);
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if(user != null){
+            if (user.getDisplayName()==null){
+                displayNameTextView.setText("Imagen No Disponible");
+                emailTextView.setText(user.getEmail());
+
+            }
+            else {
+                displayNameTextView.setText(user.getDisplayName());
+                emailTextView.setText(user.getEmail());
+            }
+            if(user.getPhotoUrl()==null){
+                photoImageView.setImageResource(R.drawable.profile);
+            }
+              else{
+                Glide.with(requireView()).load(user.getPhotoUrl()).into(photoImageView);
+            }
+        }
     }
 }
