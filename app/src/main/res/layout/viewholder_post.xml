@@ -5,17 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardUseCompatPadding="true">
+
     <LinearLayout
-        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:orientation="horizontal"
         android:padding="10dp">
+
         <ImageView
             android:id="@+id/photoImageView"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
             app:srcCompat="@drawable/user" />
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,34 +39,46 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:text="Fecha"/>
+                android:text="Fecha" />
+
             <TextView
                 android:id="@+id/contentTextView"
-                android:textSize="20sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="Contenido"/>
+                android:text="Contenido"
+                android:textSize="20sp" />
+            <ImageView
+                android:id="@+id/mediaImage"
+                android:layout_width="196dp"
+                android:layout_height="196dp"
+                android:layout_marginTop="10dp"
+                android:adjustViewBounds="true">
+            </ImageView>
+
+
             <LinearLayout
                 android:id="@+id/likeLinearLayout"
-                android:layout_marginTop="10dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:orientation="horizontal">
+
                 <ImageView
                     android:id="@+id/likeImageView"
-                    app:srcCompat="@drawable/like_on"
-                    android:adjustViewBounds="true"
                     android:layout_width="20dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"/>
+                    android:layout_gravity="center_vertical"
+                    android:adjustViewBounds="true"
+                    app:srcCompat="@drawable/like_on" />
+
                 <TextView
                     android:id="@+id/numLikesTextView"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
                     android:layout_gravity="center_vertical"
-                    android:text="200K"/>
+                    android:layout_marginStart="4dp"
+                    android:text="200K" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

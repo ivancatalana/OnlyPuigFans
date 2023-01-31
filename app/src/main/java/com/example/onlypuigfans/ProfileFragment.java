@@ -1,5 +1,6 @@
 package com.example.onlypuigfans;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -11,6 +12,7 @@ import androidx.navigation.Navigation;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,7 +24,8 @@ public class ProfileFragment extends Fragment {
 
     ImageView photoImageView;
     TextView displayNameTextView, emailTextView;
-
+    NavController navController;
+    private Button editarFoto;
     public ProfileFragment() {}
 
 
@@ -39,6 +42,30 @@ public class ProfileFragment extends Fragment {
         photoImageView = view.findViewById(R.id.photoImageView);
         displayNameTextView = view.findViewById(R.id.displayNameTextView);
         emailTextView = view.findViewById(R.id.emailTextView);
+        editarFoto =  view.findViewById(R.id.cambiarFoto);
+        navController = Navigation.findNavController(view);
+        /*
+        // Boton Floating Listener
+
+        view.findViewById(R.id.gotoEditProfileFragmentButton).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(),EditProfilePage.class);
+                startActivity(intent);
+            }
+        });
+
+         */
+
+
+        editarFoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                navController.navigate(R.id.profilePictureFragment);
+
+            }
+        });
+
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 

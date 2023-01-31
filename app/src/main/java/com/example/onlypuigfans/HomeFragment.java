@@ -1,11 +1,14 @@
 package com.example.onlypuigfans;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,7 +30,7 @@ import com.google.firebase.firestore.Query;
 
 public class HomeFragment extends Fragment {
     NavController navController;   // <-----------------
-
+    public AppViewModel appViewModel;
     public HomeFragment() {
 
     }
@@ -37,24 +40,68 @@ public class HomeFragment extends Fragment {
 
         super.onCreate(savedInstanceState);
 
+// Evita volver atras
+
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
             public void handleOnBackPressed() {
-                // Handle the back button even
+                //  Handle the back button even
+                // Aqui podemos configurar el comprotamiento del boton back
                 Log.d("BACKBUTTON", "Back button clicks");
             }
         };
 
         requireActivity().getOnBackPressedDispatcher().addCallback(this, callback);
+//
 
     }
+    //    //Codigo que activa El drawer desplegable Pero con Un Main(guarrete)
+    private MainActivity main;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        main = (MainActivity) activity;
+        main.unlockDrawer();
+
+    }
+
+    /*
+    //Codigo que activa El drawer desplegable
+    private MyInterface myInterface;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            myInterface = (MyInterface) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString() + " must implement MyInterface");
+        }
+    }
+//
+
+     */
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        //myInterface.unlockDrawer();
         return inflater.inflate(R.layout.fragment_home, container, false);
+
+    }
+
+    //
+  /*  @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+      //  myInterface.lockDrawer();
+        main.lockDrawer();
+
     }
 
 
+   */
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -67,10 +114,10 @@ public class HomeFragment extends Fragment {
                 navController.navigate(R.id.newPostFragment);
             }
         });
-        
+
         RecyclerView postsRecyclerView = view.findViewById(R.id.postsRecyclerView);
 
-        Query query = FirebaseFirestore.getInstance().collection("posts").limit(50);
+        Query query = FirebaseFirestore.getInstance().collection("posts").orderBy("ordenadaDateTime", Query.Direction.DESCENDING).limit(50);
 
         FirestoreRecyclerOptions<Post> options = new FirestoreRecyclerOptions.Builder<Post>()
                 .setQuery(query, Post.class)
@@ -78,6 +125,10 @@ public class HomeFragment extends Fragment {
                 .build();
 
         postsRecyclerView.setAdapter(new PostsAdapter(options));
+
+        appViewModel = new
+                ViewModelProvider(requireActivity()).get(AppViewModel.class);
+
 
     }
 
@@ -100,7 +151,8 @@ public class HomeFragment extends Fragment {
             holder.dateTimeTextView.setText(post.dateTimePost);
 
             holder.contentTextView.setText(post.content);
-            holder.contentTextView.setText(post.dateTimePost);
+
+         //   holder.contentTextView.setText(post.dateTimePost);
             // Gestion de likes
             final String postKey = getSnapshots().getSnapshot(position).getId(); final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
             if(post.likes.containsKey(uid)) holder.likeImageView.setImageResource(R.drawable.like_on);
@@ -110,10 +162,23 @@ public class HomeFragment extends Fragment {
                     .document(postKey)
                     .update("likes."+uid, post.likes.containsKey(uid) ? FieldValue.delete() : true);
             });
+            // Miniatura de media
+            if (post.mediaUrl != null) {
+                holder.mediaImageView.setVisibility(View.VISIBLE);
+                if ("audio".equals(post.mediaType)) {
+                    Glide.with(requireView()).load(R.drawable.audio).centerCrop().into(holder.mediaImageView);
+                } else {
+                    Glide.with(requireView()).load(post.mediaUrl).centerCrop().into(holder.mediaImageView);
+                }
+                holder.mediaImageView.setOnClickListener(view -> { appViewModel.postSeleccionado.setValue(post); navController.navigate(R.id.mediaFragment);
+                });
+            } else { holder.mediaImageView.setVisibility(View.GONE);
+            }
+
         }
 
         class PostViewHolder extends RecyclerView.ViewHolder {
-                ImageView authorPhotoImageView, likeImageView;
+                ImageView authorPhotoImageView, likeImageView,mediaImageView;
                 TextView authorTextView, dateTimeTextView, contentTextView, numLikesTextView;
 
 
@@ -122,12 +187,16 @@ public class HomeFragment extends Fragment {
                     authorPhotoImageView =
                             itemView.findViewById(R.id.photoImageView);
                     likeImageView = itemView.findViewById(R.id.likeImageView);
+                    mediaImageView = itemView.findViewById(R.id.mediaImage);
                     dateTimeTextView =  itemView.findViewById(R.id.dateTimeTextView);
                     authorTextView = itemView.findViewById(R.id.authorTextView);
                     contentTextView = itemView.findViewById(R.id.contentTextView);
                     numLikesTextView = itemView.findViewById(R.id.numLikesTextView);
-            }
+
+                }
         }
+
+
     }
 
 

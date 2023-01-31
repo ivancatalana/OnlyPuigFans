@@ -43,6 +43,7 @@ public class SignInFragment extends Fragment {
     private ActivityResultLauncher<Intent> activityResultLauncher;
     private EditText emailEditText, passwordEditText;
     private Button emailSignInButton;
+    private Button entrarDirectoButton;
     private LinearLayout signInForm;
     private ProgressBar signInProgressBar;
     private FirebaseAuth mAuth;
@@ -60,6 +61,8 @@ public class SignInFragment extends Fragment {
         emailEditText = view.findViewById(R.id.emailEditText);
         passwordEditText = view.findViewById(R.id.passwordEditText);
         emailSignInButton = view.findViewById(R.id.emailSignInButton);
+        entrarDirectoButton = view.findViewById(R.id.entrarDirecto);
+
         signInForm = view.findViewById(R.id.signInForm);
         signInProgressBar = view.findViewById(R.id.signInProgressBar);
         super.onViewCreated(view, savedInstanceState);
@@ -93,6 +96,12 @@ public class SignInFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 accederConEmail();
+            }
+        });
+        entrarDirectoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                accederConBoton();
             }
         });
     }
@@ -143,6 +152,25 @@ public class SignInFragment extends Fragment {
                             signInProgressBar.setVisibility(View.GONE);
                             signInForm.setVisibility(View.VISIBLE); }
                     } });
+        //Acceder Directo Boton
+    }
+    private void accederConBoton() {
+        signInForm.setVisibility(View.GONE);
+        signInProgressBar.setVisibility(View.VISIBLE);
+
+        mAuth.signInWithEmailAndPassword("Aaa@a.com", "12345678a")
+                .addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            actualizarUI(mAuth.getCurrentUser());
+                        } else {
+                            Snackbar.make(requireView(), "Error: " + task.getException(), Snackbar.LENGTH_LONG).show();
+                        }
+                        signInForm.setVisibility(View.VISIBLE);
+                        signInProgressBar.setVisibility(View.GONE);
+                    }
+                });
     }
 
 }

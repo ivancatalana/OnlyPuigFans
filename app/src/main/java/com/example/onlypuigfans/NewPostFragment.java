@@ -1,5 +1,7 @@
 package com.example.onlypuigfans;
 
+import static android.content.ContentValues.TAG;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -19,6 +21,7 @@ import androidx.navigation.Navigation;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,9 +31,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
@@ -158,15 +164,32 @@ public class NewPostFragment extends Fragment {
         private void guardarEnFirestore(String postContent, String mediaUrl) {
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                  //String uid, String author, String dateTimePost,String ordenadaDateTime,  String authorPhotoUrl, String content,String mediaUrl, String mediaType
+            postDateAndTime = LocalDateTime.now().format(formatoPost);
+            dateTimeOrdenada = LocalDateTime.now().format(fechaOrdenada);
             Post post = new Post(user.getUid(), user.getDisplayName(),postDateAndTime, dateTimeOrdenada,  (user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : "R.drawable.user"), postContent, mediaUrl, mediaTipo);
-        FirebaseFirestore.getInstance().collection("posts")
+            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                    .setPhotoUri(Uri.parse(mediaUrl))
+                    .build();
+
+            user.updateProfile(profileUpdates)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Log.d(TAG, "User profile updated.");
+                            }
+                        }
+                    });
+            FirebaseFirestore.getInstance().collection("posts")
                 .add(post)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
+
                         navController.popBackStack();
-                        InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                     //   InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                       // imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                        appViewModel.setMediaSeleccionado(null,null);
                     }
                 });
     }
@@ -178,7 +201,8 @@ public class NewPostFragment extends Fragment {
     private final ActivityResultLauncher<String> galeria = registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
         appViewModel.setMediaSeleccionado(uri, mediaTipo); });
     private final ActivityResultLauncher<Uri> camaraFotos = registerForActivityResult(new ActivityResultContracts.TakePicture(), isSuccess -> {
-        appViewModel.setMediaSeleccionado(mediaUri, "image"); });
+        appViewModel.setMediaSeleccionado(mediaUri, "image");
+    });
     private final ActivityResultLauncher<Uri> camaraVideos = registerForActivityResult(new ActivityResultContracts.TakeVideo(), isSuccess -> {
         appViewModel.setMediaSeleccionado(mediaUri, "video"); });
     private final ActivityResultLauncher<Intent> grabadoraAudio = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
