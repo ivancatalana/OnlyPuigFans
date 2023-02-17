@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -26,7 +25,10 @@
             android:id="@+id/displayNameTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="24sp" />
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
         <TextView
@@ -43,10 +45,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|start"
             android:text="Cambiar Foto"
-            app:layout_constraintTop_toBottomOf="@+id/emailTextView"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
-
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/photoImageView" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

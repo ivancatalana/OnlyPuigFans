@@ -19,6 +19,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -32,6 +33,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -55,7 +57,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.util.HashMap;
 
-public class EditProfilePage extends AppCompatActivity {
+public class EditProfilePage extends Fragment {
 
     private FirebaseAuth firebaseAuth;
     FirebaseUser firebaseUser;
@@ -64,7 +66,7 @@ public class EditProfilePage extends AppCompatActivity {
     StorageReference storageReference;
     String storagepath = "Users_Profile_Cover_image/";
     String uid;
-    ImageView set;
+    ImageView set ;
     Button volverProfile;
     TextView profilepic, editname, editpassword;
     ProgressDialog pd;
@@ -76,18 +78,21 @@ public class EditProfilePage extends AppCompatActivity {
     String storagePermission[];
     Uri imageuri;
     String profileOrCoverPhoto;
-    MainActivity mainActivity;
-    @SuppressLint("MissingInflatedId")
+    private static final int REQUEST_CAMERA_PERMISSION = 1;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_profile_page);
-        profilepic = findViewById(R.id.profilepic);
-        editname = findViewById(R.id.editname);
-        set = findViewById(R.id.photoImageView);
-        pd = new ProgressDialog(this);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.activity_edit_profile_page, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        profilepic = view.findViewById(R.id.profilepic);
+        editname = view.findViewById(R.id.editname);
+        set =    view.findViewById(R.id.photoImageView);
+        pd = new ProgressDialog(getContext());
         pd.setCanceledOnTouchOutside(false);
-        editpassword = findViewById(R.id.changepassword);
+        editpassword = view.findViewById(R.id.changepassword);
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
         firebaseDatabase = FirebaseDatabase.getInstance();
@@ -95,8 +100,7 @@ public class EditProfilePage extends AppCompatActivity {
         databaseReference = firebaseDatabase.getReference("Users");
         cameraPermission = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
         storagePermission = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
-        volverProfile = findViewById(R.id.volverProfile);
-
+        volverProfile = view.findViewById(R.id.volverProfile);
         Query query = databaseReference.orderByChild("email").equalTo(firebaseUser.getEmail());
         query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -106,7 +110,7 @@ public class EditProfilePage extends AppCompatActivity {
                     String image = "" + dataSnapshot1.child("image").getValue();
 
                     try {
-                        Glide.with(EditProfilePage.this).load(image).into(set);
+                        Glide.with(getContext()).load(image).into(set);
                     } catch (Exception e) {
                     }
                 }
@@ -142,6 +146,8 @@ public class EditProfilePage extends AppCompatActivity {
                 showNamephoneupdate("name");
             }
         });
+    }
+        /*
         volverProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -160,8 +166,10 @@ public class EditProfilePage extends AppCompatActivity {
 
     }
 
+         */
+
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         Query query = databaseReference.orderByChild("email").equalTo(firebaseUser.getEmail());
         query.addValueEventListener(new ValueEventListener() {
@@ -172,7 +180,7 @@ public class EditProfilePage extends AppCompatActivity {
                     String image = "" + dataSnapshot1.child("image").getValue();
 
                     try {
-                        Glide.with(EditProfilePage.this).load(image).into(set);
+                        Glide.with(getContext()).load(image).into(set);
                     } catch (Exception e) {
                     }
 
@@ -195,7 +203,7 @@ public class EditProfilePage extends AppCompatActivity {
     }
 
     @Override
-    protected void onStart() {
+    public void onStart() {
         super.onStart();
         Query query = databaseReference.orderByChild("email").equalTo(firebaseUser.getEmail());
         query.addValueEventListener(new ValueEventListener() {
@@ -206,7 +214,7 @@ public class EditProfilePage extends AppCompatActivity {
                     String image = "" + dataSnapshot1.child("image").getValue();
 
                     try {
-                        Glide.with(EditProfilePage.this).load(image).into(set);
+                        Glide.with(getContext()).load(image).into(set);
                     } catch (Exception e) {
                     }
 
@@ -229,7 +237,7 @@ public class EditProfilePage extends AppCompatActivity {
 
     // checking storage permission ,if given then we can add something in our storage
     private Boolean checkStoragePermission() {
-        boolean result = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
+        boolean result = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
         return result;
     }
 
@@ -240,8 +248,8 @@ public class EditProfilePage extends AppCompatActivity {
 
     // checking camera permission ,if given then we can click image using our camera
     private Boolean checkCameraPermission() {
-        boolean result = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == (PackageManager.PERMISSION_GRANTED);
-        boolean result1 = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
+        boolean result = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == (PackageManager.PERMISSION_GRANTED);
+        boolean result1 = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
         return result && result1;
     }
 
@@ -252,11 +260,11 @@ public class EditProfilePage extends AppCompatActivity {
 
     // We will show an alert box where we will write our old and new password
     private void showPasswordChangeDailog() {
-        View view = LayoutInflater.from(this).inflate(R.layout.dialog_update_password, null);
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_update_password, null);
         final EditText oldpass = view.findViewById(R.id.oldpasslog);
         final EditText newpass = view.findViewById(R.id.newpasslog);
         Button editpass = view.findViewById(R.id.updatepass);
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setView(view);
         final AlertDialog dialog = builder.create();
         dialog.show();
@@ -266,11 +274,11 @@ public class EditProfilePage extends AppCompatActivity {
                 String oldp = oldpass.getText().toString().trim();
                 String newp = newpass.getText().toString().trim();
                 if (TextUtils.isEmpty(oldp)) {
-                    Toast.makeText(EditProfilePage.this, "Current Password cant be empty", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "Current Password cant be empty", Toast.LENGTH_LONG).show();
                     return;
                 }
                 if (TextUtils.isEmpty(newp)) {
-                    Toast.makeText(EditProfilePage.this, "New Password cant be empty", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "New Password cant be empty", Toast.LENGTH_LONG).show();
                     return;
                 }
                 dialog.dismiss();
@@ -294,13 +302,13 @@ public class EditProfilePage extends AppCompatActivity {
                                     @Override
                                     public void onSuccess(Void aVoid) {
                                         pd.dismiss();
-                                        Toast.makeText(EditProfilePage.this, "Changed Password", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getContext(), "Changed Password", Toast.LENGTH_LONG).show();
                                     }
                                 }).addOnFailureListener(new OnFailureListener() {
                                     @Override
                                     public void onFailure(@NonNull Exception e) {
                                         pd.dismiss();
-                                        Toast.makeText(EditProfilePage.this, "Failed", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getContext(), "Failed", Toast.LENGTH_LONG).show();
                                     }
                                 });
                     }
@@ -308,21 +316,21 @@ public class EditProfilePage extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         pd.dismiss();
-                        Toast.makeText(EditProfilePage.this, "Failed", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Failed", Toast.LENGTH_LONG).show();
                     }
                 });
     }
 
     // Updating name
     private void showNamephoneupdate(final String key) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Update" + key);
 
         // creating a layout to write the new name
-        LinearLayout layout = new LinearLayout(this);
+        LinearLayout layout = new LinearLayout(getContext());
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setPadding(10, 10, 10, 10);
-        final EditText editText = new EditText(this);
+        final EditText editText = new EditText(getContext());
         editText.setHint("Enter" + key);
         layout.addView(editText);
         builder.setView(layout);
@@ -332,26 +340,25 @@ public class EditProfilePage extends AppCompatActivity {
             public void onClick(DialogInterface dialog, int which) {
                 final String value = editText.getText().toString().trim();
                 if (!TextUtils.isEmpty(value)) {
-                    pd.show();
+                  //  pd.show();
 
                     // Here we are updating the new name
-                    HashMap<String, Object> result = new HashMap<>();
-                    result.put(key, value);
-                    databaseReference.child(firebaseUser.getUid()).updateChildren(result).addOnSuccessListener(new OnSuccessListener<Void>() {
-                        @Override
-                        public void onSuccess(Void aVoid) {
-                            pd.dismiss();
+                    // Here we are updating the new name
+                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                            .setDisplayName(value)
+                            .build();
 
-                            // after updated we will show updated
-                            Toast.makeText(EditProfilePage.this, " updated ", Toast.LENGTH_LONG).show();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            pd.dismiss();
-                            Toast.makeText(EditProfilePage.this, "Unable to update", Toast.LENGTH_LONG).show();
-                        }
-                    });
+                    firebaseUser.updateProfile(profileUpdates)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        //Log.d(TAG, "User profile updated.");
+                                        pd.dismiss();
+                                        Toast.makeText(getContext(), "Updated", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
                     if (key.equals("name")) {
                         final DatabaseReference databaser = FirebaseDatabase.getInstance().getReference("Posts");
                         Query query = databaser.orderByChild("uid").equalTo(uid);
@@ -371,7 +378,7 @@ public class EditProfilePage extends AppCompatActivity {
                         });
                     }
                 } else {
-                    Toast.makeText(EditProfilePage.this, "Unable to update", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "Unable to update", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -389,24 +396,24 @@ public class EditProfilePage extends AppCompatActivity {
     // and image either from camera or gallery
     private void showImagePicDialog() {
         String options[] = {"Camera", "Gallery"};
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Pick Image From");
         builder.setItems(options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 // if access is not given then we will request for permission
                 if (which == 0) {
-                  //  if (!checkCameraPermission()) {
-                       // requestCameraPermission();
-                  //  } else {
-                        pickFromCamera();
-                  //  }
+                      if (!checkCameraPermission()) {
+                     requestCameraPermission();
+                      } else {
+                    pickFromCamera();
+                         }
                 } else if (which == 1) {
-                  //  if (!checkStoragePermission()) {
-                       // requestStoragePermission();
-                  //  } else {
-                        pickFromGallery();
-                  //  }
+                    //  if (!checkStoragePermission()) {
+                    // requestStoragePermission();
+                    //  } else {
+                    pickFromGallery();
+                    //  }
                 }
             }
         });
@@ -438,7 +445,7 @@ public class EditProfilePage extends AppCompatActivity {
                     if (camera_accepted && writeStorageaccepted) {
                         pickFromCamera();
                     } else {
-                        Toast.makeText(this, "Please Enable Camera and Storage Permissions", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Please Enable Camera and Storage Permissions", Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -449,7 +456,7 @@ public class EditProfilePage extends AppCompatActivity {
                     if (writeStorageaccepted) {
                         pickFromGallery();
                     } else {
-                        Toast.makeText(this, "Please Enable Storage Permissions", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "Please Enable Storage Permissions", Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -462,7 +469,7 @@ public class EditProfilePage extends AppCompatActivity {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MediaStore.Images.Media.TITLE, "Temp_pic");
         contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Temp Description");
-        imageuri = this.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+        imageuri = getContext().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
         Intent camerIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         camerIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageuri);
         startActivityForResult(camerIntent, IMAGE_PICKCAMERA_REQUEST);
@@ -477,10 +484,11 @@ public class EditProfilePage extends AppCompatActivity {
 
     // We will upload the image from here.
     private void uploadProfileCoverPhoto(final Uri uri) {
-     //   pd.show();
+        //   pd.show();
 
         // We are taking the filepath as storagepath + firebaseauth.getUid()+".png"
         String filepathname = storagepath + "" + profileOrCoverPhoto + "_" + firebaseUser.getUid();
+        StorageReference storageReference1 = storageReference.child(filepathname);
 
         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                 .setPhotoUri(imageuri)
@@ -493,13 +501,13 @@ public class EditProfilePage extends AppCompatActivity {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "User profile updated.");
                             pd.dismiss();
-                            Toast.makeText(EditProfilePage.this, "Updated", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), "Updated", Toast.LENGTH_LONG).show();
 
                         }
                     }
                 });
 
-        StorageReference storageReference1 = storageReference.child(filepathname);
+        //  StorageReference storageReference1 = storageReference.child(filepathname);
         storageReference1.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
@@ -514,31 +522,34 @@ public class EditProfilePage extends AppCompatActivity {
                     HashMap<String, Object> hashMap = new HashMap<>();
                     hashMap.put(profileOrCoverPhoto, downloadUri.toString());
                     databaseReference.child(firebaseUser.getUid()).updateChildren(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+
                         @Override
                         public void onSuccess(Void aVoid) {
                             pd.dismiss();
-                            Toast.makeText(EditProfilePage.this, "Updated", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), "Updated", Toast.LENGTH_LONG).show();
                         }
                     }).addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             pd.dismiss();
-                            Toast.makeText(EditProfilePage.this, "Error Updating ", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), "Error Updating ", Toast.LENGTH_LONG).show();
                         }
                     });
                 } else {
                     pd.dismiss();
-                    Toast.makeText(EditProfilePage.this, "Error", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "Error", Toast.LENGTH_LONG).show();
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 pd.dismiss();
-                Toast.makeText(EditProfilePage.this, "Error", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "Error", Toast.LENGTH_LONG).show();
             }
         });
     }
+}
+    /*
     public void botonAceptar (){
         Intent intent= new Intent (this, MainActivity.class);
      //   MainActivity.replaceFragment(R.id)
@@ -546,4 +557,6 @@ public class EditProfilePage extends AppCompatActivity {
       //  intent.putExtra("frag", "fragmentB");
         startActivity(intent);
     }
-}
+
+     */
+

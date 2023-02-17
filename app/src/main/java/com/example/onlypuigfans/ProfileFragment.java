@@ -28,7 +28,7 @@ public class ProfileFragment extends Fragment {
     private Button editarFoto;
     public ProfileFragment() {}
 
-
+   MainActivity mainActivity;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_profile, container, false);
@@ -44,21 +44,21 @@ public class ProfileFragment extends Fragment {
         emailTextView = view.findViewById(R.id.emailTextView);
         editarFoto =  view.findViewById(R.id.cambiarFoto);
         navController = Navigation.findNavController(view);
-        /*
+
         // Boton Floating Listener
 
-        view.findViewById(R.id.gotoEditProfileFragmentButton).setOnClickListener(new View.OnClickListener(){
+        view.findViewById(R.id.cambiarFoto).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(),EditProfilePage.class);
-                startActivity(intent);
+                navController.navigate(R.id.editProfilePage);
+
             }
         });
 
-         */
 
 
 
+/*
         editarFoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -68,6 +68,8 @@ public class ProfileFragment extends Fragment {
         });
 
 
+
+ */
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if(user != null){

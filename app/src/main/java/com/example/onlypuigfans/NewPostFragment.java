@@ -65,6 +65,7 @@ public class NewPostFragment extends Fragment {
     Uri mediaUri;
     String postDateAndTime;
     String dateTimeOrdenada;
+    String postName;
     DateTimeFormatter formatoPost =  DateTimeFormatter.ofPattern("dd/MM/yyyy  HH:mm:ss");
     DateTimeFormatter fechaOrdenada =  DateTimeFormatter.ofPattern("yyMMddHHmmss");
 
@@ -157,6 +158,7 @@ public class NewPostFragment extends Fragment {
             if(TextUtils.isEmpty(postContent)){ postConentEditText.setError("Required"); return;
             }
             publishButton.setEnabled(false);
+
             if (mediaTipo == null) { guardarEnFirestore(postContent, null);
             } else {
                 pujaIguardarEnFirestore(postContent); }
@@ -166,8 +168,14 @@ public class NewPostFragment extends Fragment {
                                  //String uid, String author, String dateTimePost,String ordenadaDateTime,  String authorPhotoUrl, String content,String mediaUrl, String mediaType
             postDateAndTime = LocalDateTime.now().format(formatoPost);
             dateTimeOrdenada = LocalDateTime.now().format(fechaOrdenada);
-            Post post = new Post(user.getUid(), user.getDisplayName(),postDateAndTime, dateTimeOrdenada,  (user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : "R.drawable.user"), postContent, mediaUrl, mediaTipo);
-            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+            if(user.getDisplayName()!=null){
+                postName=user.getDisplayName();
+            }
+            else {
+                postName = user.getEmail();
+            }
+            Post post = new Post(user.getUid(), postName,postDateAndTime, dateTimeOrdenada,  (user.getPhotoUrl() != null ? user.getPhotoUrl().toString() : "R.drawable.user"), postContent, mediaUrl, mediaTipo);
+          /*  UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                     .setPhotoUri(Uri.parse(mediaUrl))
                     .build();
 
@@ -180,6 +188,8 @@ public class NewPostFragment extends Fragment {
                             }
                         }
                     });
+
+           */
             FirebaseFirestore.getInstance().collection("posts")
                 .add(post)
                 .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {

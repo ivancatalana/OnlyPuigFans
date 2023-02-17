@@ -11,8 +11,10 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,11 +28,14 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 
 public class HomeFragment extends Fragment {
     NavController navController;   // <-----------------
     public AppViewModel appViewModel;
+    private Parcelable recyclerViewState;
+    RecyclerView postsRecyclerView;
     public HomeFragment() {
 
     }
@@ -85,9 +90,17 @@ public class HomeFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_home, container, false);
+
+        // Find the RecyclerView in the layout
+        RecyclerView recyclerView = view.findViewById(R.id.postsRecyclerView);
+
+        // Set the layout manager
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         //myInterface.unlockDrawer();
-        return inflater.inflate(R.layout.fragment_home, container, false);
+        return view;
 
     }
 
@@ -102,12 +115,26 @@ public class HomeFragment extends Fragment {
 
 
    */
+
+
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         navController = Navigation.findNavController(view);
 
+        // Restaurar el estado del RecyclerView
+        if (savedInstanceState != null) {
+            recyclerViewState = savedInstanceState.getParcelable("recycler_state");
+            try {
+
+                postsRecyclerView.getLayoutManager().onRestoreInstanceState(recyclerViewState);
+            }
+            catch ( NullPointerException n ){
+                System.out.println("error");
+            }
+        }
         view.findViewById(R.id.gotoNewPostFragmentButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,8 +142,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        RecyclerView postsRecyclerView = view.findViewById(R.id.postsRecyclerView);
-
+        postsRecyclerView = view.findViewById(R.id.postsRecyclerView);
         Query query = FirebaseFirestore.getInstance().collection("posts").orderBy("ordenadaDateTime", Query.Direction.DESCENDING).limit(50);
 
         FirestoreRecyclerOptions<Post> options = new FirestoreRecyclerOptions.Builder<Post>()
@@ -151,6 +177,7 @@ public class HomeFragment extends Fragment {
             holder.dateTimeTextView.setText(post.dateTimePost);
 
             holder.contentTextView.setText(post.content);
+            holder.deleteImageView.setVisibility(View.GONE);
 
          //   holder.contentTextView.setText(post.dateTimePost);
             // Gestion de likes
@@ -162,6 +189,23 @@ public class HomeFragment extends Fragment {
                     .document(postKey)
                     .update("likes."+uid, post.likes.containsKey(uid) ? FieldValue.delete() : true);
             });
+/*
+            //Gestion de borrados
+            if(!post.uid.equals(uid)) {
+                holder.deleteImageView.setVisibility(View.GONE);
+            }
+            else
+
+            holder.deleteImageView.setOnClickListener(view -> { FirebaseFirestore.getInstance().collection("posts")
+                    .document(postKey)
+                    .delete();
+            });
+
+
+ */
+
+
+
             // Miniatura de media
             if (post.mediaUrl != null) {
                 holder.mediaImageView.setVisibility(View.VISIBLE);
@@ -178,9 +222,8 @@ public class HomeFragment extends Fragment {
         }
 
         class PostViewHolder extends RecyclerView.ViewHolder {
-                ImageView authorPhotoImageView, likeImageView,mediaImageView;
+                ImageView authorPhotoImageView, likeImageView,deleteImageView,mediaImageView;
                 TextView authorTextView, dateTimeTextView, contentTextView, numLikesTextView;
-
 
                 PostViewHolder(@NonNull View itemView) {
                     super(itemView);
@@ -192,13 +235,26 @@ public class HomeFragment extends Fragment {
                     authorTextView = itemView.findViewById(R.id.authorTextView);
                     contentTextView = itemView.findViewById(R.id.contentTextView);
                     numLikesTextView = itemView.findViewById(R.id.numLikesTextView);
+                    deleteImageView = itemView.findViewById(R.id.deleteImageView);
 
                 }
         }
 
 
     }
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        recyclerViewState = postsRecyclerView.getLayoutManager().onSaveInstanceState();
+        outState.putParcelable("recycler_state", recyclerViewState);
+    }
 
-
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (postsRecyclerView != null && postsRecyclerView.getLayoutManager() != null) {
+            postsRecyclerView.getLayoutManager().removeAllViews(); // Limpia el RecyclerView
+        }
+    }
 }
 

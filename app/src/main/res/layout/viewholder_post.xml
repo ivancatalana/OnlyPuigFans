@@ -79,7 +79,17 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="4dp"
                     android:text="200K" />
+
+                <ImageView
+                    android:id="@+id/deleteImageView"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="fill_horizontal"
+                    android:adjustViewBounds="true"
+                    app:srcCompat="@drawable/delete" />
+
             </LinearLayout>
+
         </LinearLayout>
     </LinearLayout>
 </androidx.cardview.widget.CardView>

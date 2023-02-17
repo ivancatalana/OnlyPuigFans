@@ -45,4 +45,19 @@
         android:name="com.example.onlypuigfans.ProfilePictureFragment"
         android:label="fragment_profile_picture"
         tools:layout="@layout/fragment_profile_picture" />
+    <fragment
+        android:id="@+id/editProfilePage"
+        android:name="com.example.onlypuigfans.EditProfilePage"
+        android:label="activity_edit_profile_page"
+        tools:layout="@layout/activity_edit_profile_page" />
+    <fragment
+        android:id="@+id/misFotosFragment"
+        android:name="com.example.onlypuigfans.MisFotosFragment"
+        android:label="fragment_mis_fotos"
+        tools:layout="@layout/fragment_mis_fotos" />
+    <fragment
+        android:id="@+id/fullscreenFragment"
+        android:name="com.example.onlypuigfans.FullscreenFragment"
+        android:label="fragment_fullscreen"
+        tools:layout="@layout/fragment_fullscreen" />
 </navigation>

@@ -82,6 +82,7 @@ public class ProfilePictureFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         navController = Navigation.findNavController(view);
         super.onViewCreated(view, savedInstanceState);
+       /*
         acceptButton = view.findViewById(R.id.accept);
         backButton = view.findViewById(R.id.back);
         acceptButton.setOnClickListener(new View.OnClickListener() {
@@ -101,6 +102,8 @@ public class ProfilePictureFragment extends Fragment {
 
         });
 
+
+        */
 
     }
 }
