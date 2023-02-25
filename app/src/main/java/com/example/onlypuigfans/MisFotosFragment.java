@@ -57,12 +57,13 @@ public class MisFotosFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         navController = Navigation.findNavController(view);
 
         RecyclerView postsRecyclerView = view.findViewById(R.id.postsRecyclerView);
 
-        Query query = FirebaseFirestore.getInstance().collection("posts").orderBy("ordenadaDateTime", Query.Direction.DESCENDING).limit(50);
+        Query query = FirebaseFirestore.getInstance().collection("posts").whereEqualTo("uid",uid).orderBy("ordenadaDateTime", Query.Direction.DESCENDING).limit(50);
 
         FirestoreRecyclerOptions<Post> options = new FirestoreRecyclerOptions.Builder<Post>()
                 .setQuery(query, Post.class)
@@ -94,6 +95,7 @@ public class MisFotosFragment extends Fragment {
             final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
 
+
                 Glide.with(getContext()).load(post.authorPhotoUrl).circleCrop().into(holder.authorPhotoImageView);
                 holder.authorTextView.setText(post.author);
                 holder.dateTimeTextView.setText(post.dateTimePost);
@@ -114,11 +116,7 @@ public class MisFotosFragment extends Fragment {
                 });
 
                 //Gestion de borrados
-                if (!post.uid.equals(uid)) {
-                    holder.deleteImageView.setVisibility(View.GONE);
-                    holder.itemView.setVisibility(View.INVISIBLE);
 
-                } else
 
                     holder.deleteImageView.setOnClickListener(view -> {
                         FirebaseFirestore.getInstance().collection("posts")
@@ -143,24 +141,23 @@ public class MisFotosFragment extends Fragment {
                     holder.mediaImageView.setVisibility(View.GONE);
                 }
 
+
+
         }
-
-
         class PostViewHolder extends RecyclerView.ViewHolder {
             ImageView authorPhotoImageView, likeImageView,deleteImageView,mediaImageView;
             TextView authorTextView, dateTimeTextView, contentTextView, numLikesTextView;
 
             PostViewHolder(@NonNull View itemView) {
                 super(itemView);
-                authorPhotoImageView =
-                        itemView.findViewById(R.id.photoImageView);
+                authorPhotoImageView = itemView.findViewById(R.id.photoImageView);
                 likeImageView = itemView.findViewById(R.id.likeImageView);
                 mediaImageView = itemView.findViewById(R.id.mediaImage);
                 dateTimeTextView =  itemView.findViewById(R.id.dateTimeTextView);
                 authorTextView = itemView.findViewById(R.id.authorTextView);
                 contentTextView = itemView.findViewById(R.id.contentTextView);
                 numLikesTextView = itemView.findViewById(R.id.numLikesTextView);
-                    deleteImageView = itemView.findViewById(R.id.deleteImageView);
+                deleteImageView = itemView.findViewById(R.id.deleteImageView);
 
             }
         }

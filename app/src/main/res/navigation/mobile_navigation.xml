@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@id/signInFragment">
+    app:startDestination="@id/fullscreenFragment">
 
     <fragment
         android:id="@+id/signInFragment"
@@ -60,4 +60,9 @@
         android:name="com.example.onlypuigfans.FullscreenFragment"
         android:label="fragment_fullscreen"
         tools:layout="@layout/fragment_fullscreen" />
+    <fragment
+        android:id="@+id/postProfileFragment"
+        android:name="com.example.onlypuigfans.PostProfileFragment"
+        android:label="fragment_post_profile"
+        tools:layout="@layout/fragment_post_profile" />
 </navigation>

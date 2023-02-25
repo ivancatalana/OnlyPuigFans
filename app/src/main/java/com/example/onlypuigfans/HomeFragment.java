@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -30,6 +32,9 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class HomeFragment extends Fragment {
     NavController navController;   // <-----------------
@@ -172,7 +177,21 @@ public class HomeFragment extends Fragment {
 
         @Override
         protected void onBindViewHolder(@NonNull PostViewHolder holder, int position, @NonNull final Post post) {
-            Glide.with(getContext()).load(post.authorPhotoUrl).circleCrop().into(holder.authorPhotoImageView);
+/*
+            if(post.authorPhotoUrl!=null){
+                Glide.with(getContext()).load(post.authorPhotoUrl).circleCrop().into(holder.authorPhotoImageView);
+            }
+            else{
+                Glide.with(requireView()).load(getResources().getDrawable(R.drawable.profile)).circleCrop().into(holder.authorPhotoImageView);
+            }
+
+ */
+            if (post.authorPhotoUrl.contains("http")||post.authorPhotoUrl.contains("content")) {
+                // El campo authorPhotoUrl comienza con "http"
+                Glide.with(getContext()).load(post.authorPhotoUrl).circleCrop().into(holder.authorPhotoImageView);
+            }
+            else         Glide.with(requireView()).load(getResources().getDrawable(R.drawable.profile)).circleCrop().into(holder.authorPhotoImageView);
+
             holder.authorTextView.setText(post.author);
             holder.dateTimeTextView.setText(post.dateTimePost);
 
@@ -181,13 +200,38 @@ public class HomeFragment extends Fragment {
 
          //   holder.contentTextView.setText(post.dateTimePost);
             // Gestion de likes
-            final String postKey = getSnapshots().getSnapshot(position).getId(); final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            final String postKey = getSnapshots().getSnapshot(position).getId();
+            final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
             if(post.likes.containsKey(uid)) holder.likeImageView.setImageResource(R.drawable.like_on);
             else holder.likeImageView.setImageResource(R.drawable.like_off);
             holder.numLikesTextView.setText(String.valueOf(post.likes.size()));
             holder.likeImageView.setOnClickListener(view -> { FirebaseFirestore.getInstance().collection("posts")
                     .document(postKey)
                     .update("likes."+uid, post.likes.containsKey(uid) ? FieldValue.delete() : true);
+            });
+            holder.authorPhotoImageView.setOnClickListener(view -> {
+                appViewModel.postSeleccionado.setValue(post);
+                //
+                //
+                //PostProfileFragment postProfileFragment = PostProfileFragment.newInstance().setPostProfile(R.drawable.profile,post.author,post.uid);
+                Bundle bundle = new Bundle();
+
+                bundle.putString("nombre", post.author);
+                bundle.putString("email", post.uid);
+                bundle.putInt("foto", R.drawable.profile);
+
+
+                if (post.uid.equals(uid)){
+                    navController.navigate(R.id.profileFragment);
+                }
+                else{
+                    navController.navigate(R.id.postProfileFragment,bundle);
+
+                }
+
+
+
+
             });
 /*
             //Gestion de borrados

@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Menu;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,12 +16,14 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -53,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
          drawer = binding.drawerLayout;
          //Bloqueamos el drawer para que no se pueda desplegar con el dedo
-         lockDrawer();
+        // lockDrawer();
         NavigationView navigationView = binding.navView;
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -103,7 +106,22 @@ public class MainActivity extends AppCompatActivity {
             int requestCode = 0;
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, requestCode);
         }
+        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
+            @Override
+            public void onDestinationChanged(@NonNull NavController controller,
+                                             @NonNull NavDestination destination, @Nullable Bundle arguments) {
 
+                if (destination.getId() == R.id.fullscreenFragment) {
+                    // Hide status bar
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                }
+                else {
+                    // Show status bar
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+                }
+            }
+        });
     }
 
     @Override

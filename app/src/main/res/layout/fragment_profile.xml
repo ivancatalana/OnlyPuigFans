@@ -7,50 +7,92 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/photoImageView"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/displayNameTextView"
-            tools:layout_gravity="center" />
-
-
-        <TextView
-            android:id="@+id/displayNameTextView"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="24sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="66dp"
+                android:layout_height="27dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="4dp"
+                android:text="Posts"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/contador2"
+                android:layout_width="65dp"
+                android:layout_height="39dp"
+                android:gravity="center|left"
+                android:text="     "
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView2"
+                tools:textSize="19dp" />
+
+            <ImageView
+                android:id="@+id/photoImageView"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:layout_gravity="center" />
 
 
-        <TextView
-            android:id="@+id/emailTextView"
-            android:layout_width="match_parent"
-            android:layout_height="122dp"
-            app:layout_constraintBottom_toTopOf="@+id/cambiarFoto"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/photoImageView" />
+            <TextView
+                android:id="@+id/displayNameTextView"
+                android:layout_width="411dp"
+                android:layout_height="39dp"
+                android:gravity="center"
+                android:textSize="24sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/photoImageView" />
 
-        <Button
-            android:id="@+id/cambiarFoto"
-            android:layout_width="117dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|start"
-            android:text="Cambiar Foto"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/photoImageView" />
+            <TextView
+                android:id="@+id/emailTextView"
+                android:layout_width="414dp"
+                android:layout_height="43dp"
+                android:layout_marginStart="4dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/displayNameTextView" />
+
+            <TextView
+                android:id="@+id/editPhoto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:layout_marginEnd="16dp"
+                android:text="Edit Photo"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/button2"
+                android:layout_width="103dp"
+                android:layout_height="123dp"
+                android:background="#00000000"
+                android:text="↶"
+                android:textColor="@color/Black"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/postsRecyclerView"
+                android:layout_width="411dp"
+                android:layout_height="295dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintTop_toBottomOf="@+id/emailTextView" />
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
 </LinearLayout>

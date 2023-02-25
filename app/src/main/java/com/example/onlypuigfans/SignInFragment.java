@@ -15,6 +15,8 @@ import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -94,7 +96,9 @@ public class SignInFragment extends Fragment {
                         }
                     }
                 });
-        accederAutomaticamente();
+        navController = Navigation.findNavController(view);
+        mAuth = FirebaseAuth.getInstance();
+
 
         googleSignInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -224,48 +228,73 @@ public class SignInFragment extends Fragment {
         }
 
 
-
-
     }
 
-    private void accederAutomaticamente() {
-        String username = "";
-        String password = "";
+    /*
+    //Intento de codigo que escribe un fichero
 
-        try {
-            Context context = requireContext();
+        private void accederAutomaticamente() {
+            String username = "";
+            String password = "";
 
-            File file = new File(context.getFilesDir(), "account.txt");
-            FileReader fileReader = new FileReader(file);
-            BufferedReader bufferedReader = new BufferedReader(fileReader);
-            if (bufferedReader.readLine()!=null) username = bufferedReader.readLine().trim();
-            if (bufferedReader.readLine()!=null) password = bufferedReader.readLine().trim();
+            try {
+                Context context = requireContext();
 
-            bufferedReader.close();
-            fileReader.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+                File file = new File(context.getFilesDir(), "account.txt");
+                FileReader fileReader = new FileReader(file);
+                BufferedReader bufferedReader = new BufferedReader(fileReader);
+                if (bufferedReader.readLine()!=null) username = bufferedReader.readLine().trim();
+                if (bufferedReader.readLine()!=null) password = bufferedReader.readLine().trim();
 
-        if (!username.isEmpty()) {
-            signInForm.setVisibility(View.GONE);
-            signInProgressBar.setVisibility(View.VISIBLE);
+                bufferedReader.close();
+                fileReader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-            mAuth.signInWithEmailAndPassword(username, password)
-                    .addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()) {
-                                actualizarUI(mAuth.getCurrentUser());
-                            } else {
-                                Snackbar.make(requireView(), "Error: " + task.getException(), Snackbar.LENGTH_LONG).show();
+            if (!username.isEmpty()) {
+                signInForm.setVisibility(View.GONE);
+                signInProgressBar.setVisibility(View.VISIBLE);
+
+                mAuth.signInWithEmailAndPassword(username, password)
+                        .addOnCompleteListener(requireActivity(), new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    actualizarUI(mAuth.getCurrentUser());
+                                } else {
+                                    Snackbar.make(requireView(), "Error: " + task.getException(), Snackbar.LENGTH_LONG).show();
+                                }
+                                signInForm.setVisibility(View.VISIBLE);
+                                signInProgressBar.setVisibility(View.GONE);
                             }
-                            signInForm.setVisibility(View.VISIBLE);
-                            signInProgressBar.setVisibility(View.GONE);
-                        }
-                    });
+                        });
+            }
         }
+
+
+     */
+    private void accederAutomaticamente() {
+        final Handler handler = new Handler(Looper.getMainLooper());
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Do something after 3000ms
+                FirebaseUser user = mAuth.getCurrentUser();
+                if (user != null) {
+                    signInForm.setVisibility(View.GONE);
+                    signInProgressBar.setVisibility(View.VISIBLE);
+
+                    actualizarUI(mAuth.getCurrentUser());
+
+                    signInForm.setVisibility(View.VISIBLE);
+                    signInProgressBar.setVisibility(View.GONE);
+                }
+
+
+            }
+        }, 100);
     }
-
-
 }
+
