@@ -151,10 +151,9 @@ public class PostProfileFragment extends Fragment {
 
             if(post.authorPhotoUrl.contains("http")||post.authorPhotoUrl.contains("content")){
                 photoOK= post.authorPhotoUrl;
-
        }
             if (photoOK==null)
-            Glide.with(requireView()).load(getResources().getDrawable(R.drawable.image10)).circleCrop().into(holder.authorPhotoImageView);
+            Glide.with(requireView()).load(getResources().getDrawable(R.drawable.profile)).circleCrop().into(holder.authorPhotoImageView);
             else
             Glide.with(getContext()).load(photoOK).circleCrop().into(postPhotoImageView);
 

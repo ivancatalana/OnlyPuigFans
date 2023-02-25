@@ -58,8 +58,8 @@
 
             <TextView
                 android:id="@+id/emailTextView"
-                android:layout_width="414dp"
-                android:layout_height="43dp"
+                android:layout_width="406dp"
+                android:layout_height="42dp"
                 android:layout_marginStart="4dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/displayNameTextView" />
@@ -89,6 +89,7 @@
                 android:layout_width="411dp"
                 android:layout_height="295dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/emailTextView" />
 
 
